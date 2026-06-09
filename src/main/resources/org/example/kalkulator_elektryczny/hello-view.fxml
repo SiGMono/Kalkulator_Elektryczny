@@ -16,7 +16,7 @@
          <Font size="24.0" />
       </font>
    </Label>
-    <ComboBox onAction="#onTypObliczeniaChanged" promptText="Wybierz Dzialanie">
+    <ComboBox fx:id="typComboBox" onAction="#onTypObliczeniaChanged" promptText="Wybierz Dzialanie">
         <items>
             <FXCollections fx:factory="observableArrayList">
                 <String fx:value="Napiecie" />
