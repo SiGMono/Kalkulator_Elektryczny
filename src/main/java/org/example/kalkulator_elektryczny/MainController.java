@@ -27,10 +27,17 @@ public class MainController {
     private Label wynikLabel;
 
     @FXML
-    public void initialize(){}
+    public void initialize(){
+        pole1.setDisable(true);
+        pole2.setDisable(true);
+        pole3.setDisable(true);
+    }
 
     @FXML
     public void onTypObliczeniaChanged(){
+        pole1.setDisable(false);
+        pole2.setDisable(false);
+        pole3.setDisable(false);
         pole1.setText("");
         pole2.setText("");
         pole3.setText("");
@@ -78,47 +85,51 @@ public class MainController {
 
     @FXML
     public void onObliczClick(){
-        if (checkIfNumber(pole1.getText()) ||  checkIfNumber(pole2.getText()) || checkIfNumber(pole3.getText())){
-            Double pole1num = Double.parseDouble(pole1.getText());
-            Double pole2num = Double.parseDouble(pole2.getText());
-            Double pole3num = 0.0;
-            if(!pole3.getText().isEmpty()){
-                pole3num = Double.parseDouble(pole3.getText());
-            }
-            switch (typComboBox.getValue().toString()){
-                case "Napiecie":
-                    wynikLabel.setText(kalkulatorElektryczny.obliczNapiecie(pole1num, pole2num) + "V");
-                    break;
-                case "Natezenie":
-                    wynikLabel.setText(kalkulatorElektryczny.obliczNatezenie(pole1num, pole2num) + "A");
-                    break;
-                case "Opor":
-                    wynikLabel.setText(kalkulatorElektryczny.obliczOpor(pole1num, pole2num) + "Ω");
-                    break;
-                case "Opor Szeregowy":
-                    if(pole3.getText().isEmpty()){
-                        wynikLabel.setText(kalkulatorElektryczny.szeregowo(pole1num, pole2num) + "Ω");
-                    }else{
-                        wynikLabel.setText(kalkulatorElektryczny.szeregowo(pole1num, pole2num, pole3num) + "Ω");
-                    }
-                    break;
-                case "Opor Rownolegly":
-                    if(pole3.getText().isEmpty()){
-                        wynikLabel.setText(kalkulatorElektryczny.rownolegle(pole1num, pole2num) + "Ω");
-                    }else{
-                        wynikLabel.setText(kalkulatorElektryczny.rownolegle(pole1num, pole2num, pole3num) + "Ω");
-                    }
-                    break;
-                case "Moc":
-                    if(pole3.getText().isEmpty()){
-                        wynikLabel.setText(kalkulatorElektryczny.obliczMoc(pole1num, pole2num) + "W");
-                    }else{
-                        wynikLabel.setText(kalkulatorElektryczny.obliczMoc(pole1num, pole2num, pole3num) + "J");
-                    }
-                    break;
-            }
+        if(pole1.getText().isEmpty() || pole2.getText().isEmpty()){
+            wynikLabel.setText("Jedna z dwoch wymaganych wartosci jest pusta");
         }else{
-            wynikLabel.setText("Zla wartosc wejsciowa na jednym z pol");
+            if (checkIfNumber(pole1.getText()) ||  checkIfNumber(pole2.getText()) || checkIfNumber(pole3.getText())){
+                Double pole1num = Double.parseDouble(pole1.getText());
+                Double pole2num = Double.parseDouble(pole2.getText());
+                Double pole3num = 0.0;
+                if(!pole3.getText().isEmpty()){
+                    pole3num = Double.parseDouble(pole3.getText());
+                }
+                switch (typComboBox.getValue().toString()){
+                    case "Napiecie":
+                        wynikLabel.setText(kalkulatorElektryczny.obliczNapiecie(pole1num, pole2num) + "V");
+                        break;
+                    case "Natezenie":
+                        wynikLabel.setText(kalkulatorElektryczny.obliczNatezenie(pole1num, pole2num) + "A");
+                        break;
+                    case "Opor":
+                        wynikLabel.setText(kalkulatorElektryczny.obliczOpor(pole1num, pole2num) + "Ω");
+                        break;
+                    case "Opor Szeregowy":
+                        if(pole3.getText().isEmpty()){
+                            wynikLabel.setText(kalkulatorElektryczny.szeregowo(pole1num, pole2num) + "Ω");
+                        }else{
+                            wynikLabel.setText(kalkulatorElektryczny.szeregowo(pole1num, pole2num, pole3num) + "Ω");
+                        }
+                        break;
+                    case "Opor Rownolegly":
+                        if(pole3.getText().isEmpty()){
+                            wynikLabel.setText(kalkulatorElektryczny.rownolegle(pole1num, pole2num) + "Ω");
+                        }else{
+                            wynikLabel.setText(kalkulatorElektryczny.rownolegle(pole1num, pole2num, pole3num) + "Ω");
+                        }
+                        break;
+                    case "Moc":
+                        if(pole3.getText().isEmpty()){
+                            wynikLabel.setText(kalkulatorElektryczny.obliczMoc(pole1num, pole2num) + "W");
+                        }else{
+                            wynikLabel.setText(kalkulatorElektryczny.obliczMoc(pole1num, pole2num, pole3num) + "J");
+                        }
+                        break;
+                }
+            }else{
+                wynikLabel.setText("Zla wartosc wejsciowa na jednym z pol");
+            }
         }
     }
 }
