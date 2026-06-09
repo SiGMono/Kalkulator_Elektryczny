@@ -34,6 +34,7 @@ public class MainController {
         pole1.setText("");
         pole2.setText("");
         pole3.setText("");
+        wynikLabel.setText("");
         switch (typComboBox.getValue().toString()){
             case "Napiecie":
                 pole1label.setText("Natezenie");
