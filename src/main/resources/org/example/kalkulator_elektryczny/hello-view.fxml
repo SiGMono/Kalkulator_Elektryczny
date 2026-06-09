@@ -1,16 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.kalkulator_elektryczny.MainController">
+<VBox alignment="CENTER" prefHeight="499.0" prefWidth="500.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.kalkulator_elektryczny.MainController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
+   <Label alignment="CENTER" prefHeight="38.0" prefWidth="392.0" text="Kalkulator Elektryczny">
+      <font>
+         <Font size="24.0" />
+      </font>
+   </Label>
+    <ComboBox onAction="#onTypObliczeniaChanged" promptText="Wybierz Dzialanie">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Napiecie" />
+                <String fx:value="Natezenie" />
+                <String fx:value="Opor" />
+                <String fx:value="Opor Szeregowy" />
+                <String fx:value="Opor Rownolegly" />
+                <String fx:value="Moc" />
+            </FXCollections>
+        </items>
+    </ComboBox>
+   <Label fx:id="pole1label" alignment="CENTER" prefHeight="17.0" prefWidth="101.0" text="OP1" />
+   <TextField fx:id="pole1" prefHeight="25.0" prefWidth="459.0" />
+   <Label fx:id="pole2label" alignment="CENTER" prefHeight="17.0" prefWidth="95.0" text="OP2" />
+   <TextField fx:id="pole2" />
+   <Label fx:id="pole3label" alignment="CENTER" prefHeight="17.0" prefWidth="89.0" text="OP3" />
+   <TextField fx:id="pole3" />
+    <Button onAction="#onObliczClick" prefHeight="40.0" prefWidth="122.0" text="Oblicz">
+      <font>
+         <Font size="18.0" />
+      </font></Button>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
+    <Label fx:id="wynikLabel" />
 </VBox>
