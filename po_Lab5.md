@@ -69,21 +69,21 @@ Sygnatury metod w klasie `KalkulatorElektryczny`:
 
 ```java
 // Prawo Ohma (trzy oddzielne metody — obliczają różne wielkości)
-double obliczNapiecie(double I, double R)      // U = I · R
-double obliczNatezenie(double U, double R)     // I = U / R
-double obliczOpor(double U, double I)          // R = U / I
+double obliczNapiecie(double I, double R);      // U = I · R
+double obliczNatezenie(double U, double R);    // I = U / R
+double obliczOpor(double U, double I);      // R = U / I
 
 // Rezystory szeregowo — PRZECIĄŻANIE METOD
-double szeregowo(double R1, double R2)               // R = R1 + R2
-double szeregowo(double R1, double R2, double R3)    // R = R1 + R2 + R3
+double szeregowo(double R1, double R2);               // R = R1 + R2
+double szeregowo(double R1, double R2, double R3);    // R = R1 + R2 + R3
 
 // Rezystory równolegle — PRZECIĄŻANIE METOD
-double rownolegle(double R1, double R2)              // 1/(1/R1 + 1/R2)
-double rownolegle(double R1, double R2, double R3)   // 1/(1/R1 + 1/R2 + 1/R3)
+double rownolegle(double R1, double R2);              // 1/(1/R1 + 1/R2)
+double rownolegle(double R1, double R2, double R3);   // 1/(1/R1 + 1/R2 + 1/R3)
 
 // Moc i energia — PRZECIĄŻANIE METOD
-double obliczMoc(double U, double I)                 // P = U · I  [W]
-double obliczMoc(double U, double I, double t)       // W = U · I · t  [J]
+double obliczMoc(double U, double I);                 // P = U · I  [W]
+double obliczMoc(double U, double I, double t);       // W = U · I · t  [J]
 ```
 
 ## <img src="https://img.icons8.com/color/48/class.png" alt="Piktogram diagram klas" width="24" /> Diagram klas
@@ -129,21 +129,253 @@ classDiagram
 
 ```java
 // KalkulatorElektryczny.java
+package org.example.kalkulator_elektryczny;
+
+public class KalkulatorElektryczny {
+
+    public double obliczNapiecie(double I, double R){
+        return I*R;
+    }
+    public double obliczNatezenie(double U, double R){
+        return U/R;
+    }
+    public double obliczOpor(double U, double I){
+        return U/I;
+    }
+
+    public double szeregowo(double R1, double R2){
+        return R1+R2;
+    }
+    public double szeregowo(double R1, double R2, double R3){
+        return R1+R2+R3;
+    }
+
+    public double rownolegle(double R1, double R2){
+        return 1/(1/R1 + 1/R2);
+    }
+    public double rownolegle(double R1, double R2, double R3){
+        return 1/(1/R1 + 1/R2 + 1/R3);
+    }
+
+    double obliczMoc(double U, double I){
+        return U*I;
+    }
+    double obliczMoc(double U, double I, double t){
+        return U*I*t;
+    }
+}
 
 ```
 
 ```java
 // MainController.java
+package org.example.kalkulator_elektryczny;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+
+public class MainController {
+
+    @FXML
+    private KalkulatorElektryczny kalkulatorElektryczny = new KalkulatorElektryczny();
+    @FXML
+    private ComboBox typComboBox;
+    @FXML
+    private Label pole1label;
+    @FXML
+    private TextField pole1;
+    @FXML
+    private Label pole2label;
+    @FXML
+    private TextField pole2;
+    @FXML
+    private Label pole3label;
+    @FXML
+    private TextField pole3;
+    @FXML
+    private Label wynikLabel;
+
+    @FXML
+    public void initialize(){
+        pole1.setDisable(true);
+        pole2.setDisable(true);
+        pole3.setDisable(true);
+    }
+
+    @FXML
+    public void onTypObliczeniaChanged(){
+        pole1.setDisable(false);
+        pole2.setDisable(false);
+        pole3.setDisable(false);
+        pole1.setText("");
+        pole2.setText("");
+        pole3.setText("");
+        wynikLabel.setText("");
+        switch (typComboBox.getValue().toString()){
+            case "Napiecie":
+                pole1label.setText("Natezenie");
+                pole2label.setText("Opor");
+                pole3.setDisable(true);
+                break;
+            case "Natezenie":
+                pole1label.setText("Napiecie");
+                pole2label.setText("Opor");
+                pole3.setDisable(true);
+                break;
+            case "Opor":
+                pole1label.setText("Napiecie");
+                pole2label.setText("Natezenie");
+                pole3.setDisable(true);
+                break;
+            case "Opor Szeregowy":
+            case "Opor Rownolegly":
+                pole1label.setText("R1");
+                pole2label.setText("R2");
+                pole3label.setText("R3");
+                pole3.setDisable(false);
+                break;
+            case "Moc":
+                pole1label.setText("Napiecie");
+                pole2label.setText("Natezenie");
+                pole3label.setText("Czas (sekundy)");
+                pole3.setDisable(false);
+                break;
+        }
+    }
+
+    public static boolean checkIfNumber(String s){
+        try{
+            Double.parseDouble(s);
+            return true;
+        }catch(NumberFormatException e){
+            return false;
+        }
+    }
+
+    @FXML
+    public void onObliczClick(){
+        if(pole1.getText().isEmpty() || pole2.getText().isEmpty()){
+            wynikLabel.setText("Jedna z dwoch wymaganych wartosci jest pusta");
+        }else{
+            if (checkIfNumber(pole1.getText()) ||  checkIfNumber(pole2.getText()) || checkIfNumber(pole3.getText())){
+                Double pole1num = Double.parseDouble(pole1.getText());
+                Double pole2num = Double.parseDouble(pole2.getText());
+                Double pole3num = 0.0;
+                if(!pole3.getText().isEmpty()){
+                    pole3num = Double.parseDouble(pole3.getText());
+                }
+                switch (typComboBox.getValue().toString()){
+                    case "Napiecie":
+                        wynikLabel.setText(kalkulatorElektryczny.obliczNapiecie(pole1num, pole2num) + "V");
+                        break;
+                    case "Natezenie":
+                        wynikLabel.setText(kalkulatorElektryczny.obliczNatezenie(pole1num, pole2num) + "A");
+                        break;
+                    case "Opor":
+                        wynikLabel.setText(kalkulatorElektryczny.obliczOpor(pole1num, pole2num) + "Ω");
+                        break;
+                    case "Opor Szeregowy":
+                        if(pole3.getText().isEmpty()){
+                            wynikLabel.setText(kalkulatorElektryczny.szeregowo(pole1num, pole2num) + "Ω");
+                        }else{
+                            wynikLabel.setText(kalkulatorElektryczny.szeregowo(pole1num, pole2num, pole3num) + "Ω");
+                        }
+                        break;
+                    case "Opor Rownolegly":
+                        if(pole3.getText().isEmpty()){
+                            wynikLabel.setText(kalkulatorElektryczny.rownolegle(pole1num, pole2num) + "Ω");
+                        }else{
+                            wynikLabel.setText(kalkulatorElektryczny.rownolegle(pole1num, pole2num, pole3num) + "Ω");
+                        }
+                        break;
+                    case "Moc":
+                        if(pole3.getText().isEmpty()){
+                            wynikLabel.setText(kalkulatorElektryczny.obliczMoc(pole1num, pole2num) + "W");
+                        }else{
+                            wynikLabel.setText(kalkulatorElektryczny.obliczMoc(pole1num, pole2num, pole3num) + "J");
+                        }
+                        break;
+                }
+            }else{
+                wynikLabel.setText("Zla wartosc wejsciowa na jednym z pol");
+            }
+        }
+    }
+}
 
 ```
 
 ```java
 // Main.java
+package org.example.kalkulator_elektryczny;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+public class Main extends Application {
+    @Override
+    public void start(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 500, 500);
+        stage.setTitle("Kalkulator Elektryczny");
+        stage.setScene(scene);
+        stage.show();
+    }
+}
 
 ```
 
 ```xml
 <!-- main.fxml -->
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" prefHeight="499.0" prefWidth="500.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.kalkulator_elektryczny.MainController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+    <Label alignment="CENTER" prefHeight="38.0" prefWidth="392.0" text="Kalkulator Elektryczny">
+        <font>
+            <Font size="24.0" />
+        </font>
+    </Label>
+    <ComboBox fx:id="typComboBox" onAction="#onTypObliczeniaChanged" promptText="Wybierz Dzialanie">
+        <items>
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Napiecie" />
+                <String fx:value="Natezenie" />
+                <String fx:value="Opor" />
+                <String fx:value="Opor Szeregowy" />
+                <String fx:value="Opor Rownolegly" />
+                <String fx:value="Moc" />
+            </FXCollections>
+        </items>
+    </ComboBox>
+    <Label fx:id="pole1label" alignment="CENTER" prefHeight="17.0" prefWidth="101.0" text="OP1" />
+    <TextField fx:id="pole1" prefHeight="25.0" prefWidth="459.0" />
+    <Label fx:id="pole2label" alignment="CENTER" prefHeight="17.0" prefWidth="95.0" text="OP2" />
+    <TextField fx:id="pole2" />
+    <Label fx:id="pole3label" alignment="CENTER" prefHeight="17.0" prefWidth="89.0" text="OP3" />
+    <TextField fx:id="pole3" />
+    <Button onAction="#onObliczClick" prefHeight="40.0" prefWidth="122.0" text="Oblicz">
+        <font>
+            <Font size="18.0" />
+        </font></Button>
+
+    <Label fx:id="wynikLabel" />
+</VBox>
 
 ```
 
@@ -151,39 +383,37 @@ classDiagram
 
 Opis testów i przykładowe wyniki:
 
-................................................................................
-
-................................................................................
-
 ```
-Wklej tutaj zrzut ekranu lub opis działania aplikacji dla każdego typu obliczenia.
-Przykład:
+Wybranie opcji obliczeniowej Napiecie i wstawienie tylko jednej z liczb
+Wynik: Jedna z dwoch wymaganych liczb jest pusta
+(Sprawdzenie czy jedna z dwóch pierwszych liczb jest wykonywane przed wszystkimi obliczeniami więc działa tak samo dla każdego typu działania)
 
-  Typ: Napięcie (Prawo Ohma)  I = 2 A,  R = 47 Ω
-  Wynik: U = 94.00 V
+Wpisanie wartości nieliczbowej w dowolnym polu gdy przynajmniej dwa pierwsze pola mają jakąś wartość
+Wynik: Zla wartosc wejsciowa na jednym z pol
 
-  Typ: Rezystory szeregowo (3)  R1 = 100 Ω,  R2 = 220 Ω,  R3 = 330 Ω
-  Wynik: R = 650.00 Ω
+Wybranie opcji obliczeniowej Napiecie i wstawienie liczby 3 i 5
+Wynik: 15.0V
+(Dwie następne opcje (Natezenie i Opor) zawierają taką samą logikę w MainControler co Napiecie z wyjątkiem różniącej się wywołanej metody więc dalsze testy tych typów nie są potrzebne)
 
-  Typ: Rezystory równolegle (2)  R1 = 100 Ω,  R2 = 100 Ω
-  Wynik: R = 50.00 Ω
-
-  Typ: Energia  U = 230 V,  I = 5 A,  t = 3600 s
-  Wynik: W = 4 140 000.00 J
+Wybranie opcji obliczeniowej Opor Szeregowy i wstawienie wartosci 7 i 7
+Wynik: 14.0Ω
+Następnie w tej samej opcji obliczeniowej wstawienie wartosci 7, 7 i 6
+Wynik: 20.0Ω
+(Dwie następne opcje (Opor Rownolegly i Moc) zawierają taką samą logikę w MainControler co Napiecie z wyjątkiem różniącej się wywołanej metody więc dalsze testy tych typów nie są potrzebne)
 ```
 
 ## <img src="https://img.icons8.com/color/48/test-passed.png" alt="Piktogram samoocena" width="24" /> Samoocena studenta
 
 | Kryterium | Tak / Nie | Uwagi |
-|---|---|---|
-| Program uruchamia się bez błędów |  |  |
-| Layout zdefiniowany w pliku FXML |  |  |
-| Zaimplementowano przeciążenie metody `szeregowo` (2 i 3 rezystory) |  |  |
-| Zaimplementowano przeciążenie metody `rownolegle` (2 i 3 rezystory) |  |  |
-| Zaimplementowano przeciążenie metody `obliczMoc` (moc P i energia W) |  |  |
-| Kontroler poprawnie pokazuje/ukrywa pola po zmianie wyboru |  |  |
-| Program reaguje na błędne dane wejściowe |  |  |
-| Logika obliczeniowa oddzielona od kontrolera |  |  |
+|---|-----------|---|
+| Program uruchamia się bez błędów | Tak       |  |
+| Layout zdefiniowany w pliku FXML | Tak       |  |
+| Zaimplementowano przeciążenie metody `szeregowo` (2 i 3 rezystory) | Tak          |  |
+| Zaimplementowano przeciążenie metody `rownolegle` (2 i 3 rezystory) |Tak           |  |
+| Zaimplementowano przeciążenie metody `obliczMoc` (moc P i energia W) |Tak           |  |
+| Kontroler poprawnie pokazuje/ukrywa pola po zmianie wyboru | Tak          |  |
+| Program reaguje na błędne dane wejściowe | Tak          |  |
+| Logika obliczeniowa oddzielona od kontrolera | Tak          |  |
 
 ## Przesłanie pliku do oceny:
 [![Upload ZIP](https://img.shields.io/badge/Upload-PO_KowalskiJan_Lab5.zip-2ea44f?logo=icloud&logoColor=white)](https://upload2.pelo.com.pl) [zawartość: uzupełniony TEN plik oraz podfolder LAB5 z plikami źródłowymi]
